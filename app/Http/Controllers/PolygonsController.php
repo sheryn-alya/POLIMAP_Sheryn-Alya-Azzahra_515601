@@ -92,7 +92,7 @@ class PolygonsController extends Controller
         // Validasi input
         $request->validate(
             [
-                'name' => 'required|unique:polygons,name,' . $id,
+                'name' => 'required|unique:polygons,name,' . $id, // abaikan nama saat ini dari validasi unique
                 'description' => 'required',
                 'geom_polygon' => 'required',
                 'image' => 'nullable|mimes:jpeg,png,jpg,gif,svg|max:51200',

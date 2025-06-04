@@ -24,10 +24,13 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
-                <form method="POST" action="{{ route('polygons.update', $id) }}" enctype="multipart/form-data') }}" enctype="multipart/form-data">
+                <form method="POST" action="{{ route('polygons.update', $id) }}" enctype="multipart/form-data">
                     <div class="modal-body">
                         @csrf
                         @method('PATCH')
+
+                        <input type="hidden" name="id" id="point-id"> <!-- Tambahan penting -->
+
 
                         <div class="mb-3">
                             <label for="name" class="form-label">Name</label>
@@ -48,8 +51,9 @@
                         <div class="mb-3">
                             <label for="image" class="form-label">Photo</label>
                             <input type="file" class="form-control" id="image_polygon" name="image"
+                                accept=".jpeg,.jpg,.png,.gif,.svg"
                                 onchange="document.getElementById('preview-image-polygon').src = window.URL.createObjectURL(this.files[0])">
-                            <img src="" alt="" id="preview-image-polygon" class="img-thumbnail"
+                            <img src="" alt="" id="preview-image-polygon" class="img-thumbnail mt-2"
                                 width="500">
                         </div>
                     </div>
@@ -117,7 +121,8 @@
                 $('#name').val(properties.name);
                 $('#description').val(properties.description);
                 $('#geom_polygon').val(objectGeometry);
-                $('#preview-image-polygon').attr('src', "{{ asset('storage/images') }}/" + properties.image);
+                $('#preview-image-polygon').attr('src', "{{ asset('storage/images') }}/" + properties
+                .image);
 
                 //menampilkan modal edit
                 $('#editpolygonModal').modal('show');

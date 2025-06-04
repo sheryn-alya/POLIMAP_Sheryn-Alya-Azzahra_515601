@@ -2,7 +2,7 @@
 
 @section('content')
     <div class="class-card container mt-4">
-        <h2 class="text-center mb-4">Daftar Mahasiswa</h2>
+        <h2 class="text-center mb-4">Daftar Data</h2>
         <div class="table-responsive">
             <table class="table table-striped table-hover table-bordered">
                 <thead class="table-dark text-center">
@@ -28,8 +28,9 @@
                         <td>{{ $p->created_at }}</td>
                         <td>{{ $p->updated_at }}</td>
                     </tr>
-
                     @endforeach
+
+                    
                 </tbody>
             </table>
         </div>
