@@ -151,7 +151,7 @@ class PointsController extends Controller
                 if (file_exists('../storage/images/' . $old_image)) {
                     unlink('../storage/images/' . $old_image);
                 }
-            }else{
+            } else {
                 $name_image = $old_image;
             }
 

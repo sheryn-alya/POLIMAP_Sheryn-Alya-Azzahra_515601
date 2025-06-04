@@ -11,9 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('polylines', function (Blueprint $table) {
-            $table->string('photo')->nullable();
-            $table->string('lainnya')->nullable();
+        Schema::create('polylines', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
         });
     }
 
@@ -22,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('polylines');
     }
 };

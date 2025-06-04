@@ -173,6 +173,29 @@
             </div>
         </div>
     </div>
+
+    <!-- Authentication Links -->
+                        <ul class="navbar-nav ms-auto">
+                            @auth
+                                <li class="nav-item">
+                                    <span class="nav-link">Hi, {{ Auth::user()->name }}</span>
+                                </li>
+                                <li class="nav-item">
+                                    <form method="POST" action="{{ route('logout') }}">
+                                        @csrf
+                                        <button type="submit" class="btn btn-link nav-link">Logout</button>
+                                    </form>
+                                </li>
+                            @endauth
+                            @guest
+                                <li class="nav-item">
+                                    <a class="nav-link" href="{{ route('login') }}">Login</a>
+                                </li>
+                            @endguest
+                        </ul>
+                    </div>
+                </div>
+            </nav>
 @endsection
 
 @section('scripts')
@@ -189,7 +212,7 @@
         var map = L.map('map').setView([-2.5632749, 500.5021656], 13);
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);
+        }).addTo(map);user
 
 
         /* Digitize Function */
@@ -255,12 +278,14 @@
                     "Deskripsi: " + feature.properties.description + "<br>" +
                     "Diubah: " + feature.properties.created_at + "<br>" +
                     "<img src='{{ asset('storage/images') }}/" + feature.properties.image +
-                    "' width='200px' height='200px' alt=''>" +"<br>" +
+                    "' width='200px' height='200px' alt=''>" + "<br>" +
                     "<div class='row mt-4'>" +
-                        "<div class='col text-center'>" +
-                            "<a href='"+ routeedit + "' class='btn btn-warning mx-2'><i class='fa-solid fa-pen-to-square'></i></a>"+ //untuk tombol edit
-                        "</div>" +
-                        "<div class='col-6'>" +
+                    "<div class='col text-center'>" +
+                    "<a href='" + routeedit +
+                    "' class='btn btn-warning mx-2'><i class='fa-solid fa-pen-to-square'></i></a>" +
+                    //untuk tombol edit
+                    "</div>" +
+                    "<div class='col-6'>" +
                     "<form method='POST' action='" + routedelete + "'>" +
                     '@csrf' + '@method('DELETE')' +
                     "<button type='submit' class='btn btn-danger mx-2' onclick='return confirm(Yakin akan dihapus?)'><i class='fa-solid fa-trash-can'></i></button>" +
@@ -268,92 +293,94 @@
                     "</div>"; //untuk tombol hapus
 
 
-            layer.on({
-                click: function(e) {
-                    point.bindPopup(popupContent);
-                },
-                mouseover: function(e) {
-                    point.bindTooltip(feature.properties.name);
-                },
-            });
-        },
-    });
-    $.getJSON("{{ route('api.points') }}", function(data) {
-        point.addData(data);
-        map.addLayer(point);
-    });
+                layer.on({
+                    click: function(e) {
+                        point.bindPopup(popupContent);
+                    },
+                    mouseover: function(e) {
+                        point.bindTooltip(feature.properties.name);
+                    },
+                });
+            },
+        });
+        $.getJSON("{{ route('api.points') }}", function(data) {
+            point.addData(data);
+            map.addLayer(point);
+        });
 
 
-    // GeoJSON Polylines
-    var polyline = L.geoJson(null, {
-        onEachFeature: function(feature, layer) {
+        // GeoJSON Polylines
+        var polyline = L.geoJson(null, {
+            onEachFeature: function(feature, layer) {
 
-            var routedelete = "{{ route('polylines.destroy', ':id') }}";
-            routedelete = routedelete.replace(':id', feature.properties.id);
+                var routedelete = "{{ route('polylines.destroy', ':id') }}";
+                routedelete = routedelete.replace(':id', feature.properties.id);
 
-            var routeedit = "{{ route('polylines.edit', ':id') }}";
+                var routeedit = "{{ route('polylines.edit', ':id') }}";
                 routeedit = routeedit.replace(':id', feature.properties.id);
 
-            var popupContent = "Nama: " + feature.properties.name + "<br>" +
-                "Deskripsi: " + feature.properties.description + "<br>" +
-                "Panjang: " + feature.properties.length_km.toFixed(2) + " km" + "<br>" +
-                "Dibuat: " + feature.properties.created_at + "<br>" +
-                "<img src='{{ asset('storage/images') }}/" + feature.properties.image +
-                "' width='200px' height='200px' alt=''>" + "<br>" +
-                "<div class='row mt-4'>" +
-                "<div class='col text-center'>" +
-                        "<a href='" + routeedit + "' class='btn btn-warning mx-2'><i class='fa-solid fa-pen-to-square'></i></a>" +
+                var popupContent = "Nama: " + feature.properties.name + "<br>" +
+                    "Deskripsi: " + feature.properties.description + "<br>" +
+                    "Panjang: " + feature.properties.length_km.toFixed(2) + " km" + "<br>" +
+                    "Dibuat: " + feature.properties.created_at + "<br>" +
+                    "<img src='{{ asset('storage/images') }}/" + feature.properties.image +
+                    "' width='200px' height='200px' alt=''>" + "<br>" +
+                    "<div class='row mt-4'>" +
+                    "<div class='col text-center'>" +
+                    "<a href='" + routeedit +
+                    "' class='btn btn-warning mx-2'><i class='fa-solid fa-pen-to-square'></i></a>" +
                     "</div>" +
                     "<div class='col-6'>" +
-                "<form method='POST' action='" + routedelete + "'>" +
-                '@csrf' + '@method('DELETE')' +
-                "<button type='submit' class='btn btn-danger mx-2' onclick='return confirm(Yakin akan dihapus?)'><i class='fa-solid fa-trash-can'></i></button>" +
-                "</form>"
+                    "<form method='POST' action='" + routedelete + "'>" +
+                    '@csrf' + '@method('DELETE')' +
+                    "<button type='submit' class='btn btn-danger mx-2' onclick='return confirm(Yakin akan dihapus?)'><i class='fa-solid fa-trash-can'></i></button>" +
+                    "</form>"
                 "</div>" +
                 "</div>";
 
-            "Panjang: " + feature.properties.length_km.toFixed(2) + " km" + "<br>" +
-                "Dibuat: " + feature.properties.created_at;
-            layer.on({
-                click: function(e) {
-                    polyline.bindPopup(popupContent);
-                },
-                mouseover: function(e) {
-                    polyline.bindTooltip(feature.properties.name);
-                },
-            });
-        },
-    });
-    $.getJSON("{{ route('api.polylines') }}", function(data) {
-        polyline.addData(data);
-        map.addLayer(polyline);
-    });
+                "Panjang: " + feature.properties.length_km.toFixed(2) + " km" + "<br>" +
+                    "Dibuat: " + feature.properties.created_at;
+                layer.on({
+                    click: function(e) {
+                        polyline.bindPopup(popupContent);
+                    },
+                    mouseover: function(e) {
+                        polyline.bindTooltip(feature.properties.name);
+                    },
+                });
+            },
+        });
+        $.getJSON("{{ route('api.polylines') }}", function(data) {
+            polyline.addData(data);
+            map.addLayer(polyline);
+        });
 
-    // GeoJSON Polygons
-    var polygon = L.geoJson(null, {
-        onEachFeature: function(feature, layer) {
+        // GeoJSON Polygons
+        var polygon = L.geoJson(null, {
+            onEachFeature: function(feature, layer) {
 
-            var routedelete = "{{ route('polygons.destroy', ':id') }}";
-            routedelete = routedelete.replace(':id', feature.properties.id);
+                var routedelete = "{{ route('polygons.destroy', ':id') }}";
+                routedelete = routedelete.replace(':id', feature.properties.id);
 
-            var routeedit = "{{ route('polygons.edit', ':id') }}";
+                var routeedit = "{{ route('polygons.edit', ':id') }}";
                 routeedit = routeedit.replace(':id', feature.properties.id);
 
-            var popupContent = "Nama: " + feature.properties.name + "<br>" +
-                "Deskripsi: " + feature.properties.description + "<br>" +
-                "Luas: " + feature.properties.area_ha.toFixed(2) + " ha" + "<br>" +
-                "Dibuat: " + feature.properties.created_at + "<br>" +
-                "<img src='{{ asset('storage/images') }}/" + feature.properties.image +
-                "' width='200px' height='200px' alt=''>" + "<br>" +
-                "<div class='row mt-4'>" +
-                "<div class='col text-center'>" +
-                        "<a href='" + routeedit + "' class='btn btn-warning mx-2'><i class='fa-solid fa-pen-to-square'></i></a>" +
+                var popupContent = "Nama: " + feature.properties.name + "<br>" +
+                    "Deskripsi: " + feature.properties.description + "<br>" +
+                    "Luas: " + feature.properties.area_ha.toFixed(2) + " ha" + "<br>" +
+                    "Dibuat: " + feature.properties.created_at + "<br>" +
+                    "<img src='{{ asset('storage/images') }}/" + feature.properties.image +
+                    "' width='200px' height='200px' alt=''>" + "<br>" +
+                    "<div class='row mt-4'>" +
+                    "<div class='col text-center'>" +
+                    "<a href='" + routeedit +
+                    "' class='btn btn-warning mx-2'><i class='fa-solid fa-pen-to-square'></i></a>" +
                     "</div>" +
                     "<div class='col-6'>" +
-                "<form method='POST' action='" + routedelete + "'>" +
-                '@csrf' + '@method('DELETE')' +
-                "<button type='submit' class='btn btn-danger mx-2' onclick='return confirm(Yakin akan dihapus?)'><i class='fa-solid fa-trash-can'></i></button>" +
-                "</form>"
+                    "<form method='POST' action='" + routedelete + "'>" +
+                    '@csrf' + '@method('DELETE')' +
+                    "<button type='submit' class='btn btn-danger mx-2' onclick='return confirm(Yakin akan dihapus?)'><i class='fa-solid fa-trash-can'></i></button>" +
+                    "</form>"
                 "</div>" +
                 "</div>";
 

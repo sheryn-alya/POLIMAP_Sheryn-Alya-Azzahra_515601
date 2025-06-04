@@ -6,6 +6,7 @@ use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
+    public const HOME = '/map'; // diarahkan ke halaman peta setelah login
     /**
      * Register any application services.
      */
