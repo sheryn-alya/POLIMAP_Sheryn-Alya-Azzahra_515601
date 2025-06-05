@@ -212,7 +212,7 @@
         var map = L.map('map').setView([-2.5632749, 500.5021656], 13);
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-        }).addTo(map);user
+        }).addTo(map);
 
 
         /* Digitize Function */
