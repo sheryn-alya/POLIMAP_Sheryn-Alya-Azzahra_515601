@@ -5,18 +5,28 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\PolygonsModel;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Auth;
 
 
 class PolygonsController extends Controller
 {
+    protected $polygons;
     public function __construct()
     {
         $this->polygons = new PolygonsModel();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
+    public function index()
+    {
+        $data = [
+            'title' => 'Map'
+        ];
+        return view('map', $data);
+    }
+    public function create()
+    {
+        //
+    }
     public function store(Request $request)
     {
         // Validasi request
@@ -25,7 +35,7 @@ class PolygonsController extends Controller
                 'name' => 'required|unique:polygons,name',
                 'description' => 'required',
                 'geom_polygon' => 'required',
-                'image' => 'nullable|mimes:jpeg,png,jpg,gif,svg|max:1024',
+                'image' => 'nullable|mimes:jpeg,png,jpg,gif,svg|max:5000',
             ],
             [
                 'name.required' => 'Name is required',
@@ -35,129 +45,139 @@ class PolygonsController extends Controller
             ]
         );
 
-
-        //CREATE  IMAGE DIRECTOR IF NOT EXIST -PGWEBL 7
-        if (!is_dir('storage/images')) {
-            mkdir('./storage/images', 0777);
+        // Buat folder jika belum ada
+        $imageDirectory = public_path('storage/images');
+        if (!File::exists($imageDirectory)) {
+            File::makeDirectory($imageDirectory, 0777, true);
         }
 
-        //GET IMAGE FILE - PGWEBL 7
+        // Ambil gambar jika ada
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-            $name_image = time() . "_polygons." . strtolower($image->getClientOriginalExtension());
-            $image->move('storage/images', $name_image);
-            //$image->storeAs('public/images', $name_image);
-
+            $name_image = time() . "_polygon." . strtolower($image->getClientOriginalExtension());
+            $image->move($imageDirectory, $name_image);
         } else {
             $name_image = null;
         }
 
-
-
         // Simpan data
         $data = [
-            'geom' => $request->geom_polygon, // Perbaikan dari geom_point ke geom_polygon
+            'geom' => $request->geom_polygon,
             'name' => $request->name,
             'description' => $request->description,
             'image' => $name_image,
+            'user_id' => Auth::id(),
         ];
 
-        // Simpan ke database
-        if (!$this->polygons->create($data)) { // Perbaikan dari $this->points ke $this->polygons
+        if (!$this->polygons->create($data)) {
             return redirect()->route('map')->with('error', 'Polygon failed to add');
         }
 
-        // Redirect ke halaman peta
         return redirect()->route('map')->with('success', 'Polygon has been added');
+    }
+
+    public function getPolygon($id)
+    {
+        $polygon = $this->polygons->find($id);
+        return response()->json($polygon);
     }
 
     public function edit(string $id)
     {
         $data = [
             'title' => 'Edit Polygon',
-            'id' => $id
+            'id' => $id,
         ];
 
-        return view('edit_polygon', $data);
+        return view('edit-polygon', $data);
     }
 
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        // Ambil data lama
+        $request->validate([
+            'name' => 'required|string|unique:polygons,name,' . $id,
+            'description' => 'nullable|string',
+            'geom_polygon' => 'required|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:1024',
+        ]);
+
         $polygon = $this->polygons->find($id);
+
         if (!$polygon) {
             return redirect()->route('map')->with('error', 'Polygon not found');
         }
 
-        // Validasi input
-        $request->validate(
-            [
-                'name' => 'required|unique:polygons,name,' . $id, // abaikan nama saat ini dari validasi unique
-                'description' => 'required',
-                'geom_polygon' => 'required',
-                'image' => 'nullable|mimes:jpeg,png,jpg,gif,svg|max:51200',
-            ],
-            [
-                'name.required' => 'Name is required',
-                'name.unique' => 'Name already exists',
-                'description.required' => 'Description is required',
-                'geom_polygon.required' => 'Geometry is required',
-            ]
-        );
-
-        $imageDirectory = public_path('storage/images');
         $oldImage = $polygon->image;
-        $nameImage = $oldImage; // Default: pakai gambar lama
 
-        // Jika upload gambar baru
+        $polygon->name = $request->name;
+        $polygon->description = $request->description;
+        $polygon->geom = $request->geom_polygon;
+
+        // Jika ada gambar baru
         if ($request->hasFile('image')) {
-            // Buat direktori jika belum ada
-            if (!File::exists($imageDirectory)) {
-                File::makeDirectory($imageDirectory, 0777, true);
-            }
-
-            // Hapus gambar lama
-            if ($oldImage && file_exists($imageDirectory . '/' . $oldImage)) {
-                unlink($imageDirectory . '/' . $oldImage);
-            }
-
-            // Simpan gambar baru
             $image = $request->file('image');
-            $nameImage = time() . "_polygons." . strtolower($image->getClientOriginalExtension());
-            $image->move($imageDirectory, $nameImage);
+            $imageName = time() . "_polygon." . strtolower($image->getClientOriginalExtension());
+            $image->move(public_path('storage/images'), $imageName);
+            $polygon->image = $imageName;
+
+            // Hapus gambar lama jika ada
+            if ($oldImage && file_exists(public_path('storage/images/' . $oldImage))) {
+                unlink(public_path('storage/images/' . $oldImage));
+            }
         }
 
-        // Siapkan data untuk update
-        $data = [
-            'name' => $request->name,
-            'description' => $request->description,
-            'geom' => $request->geom_polygon,
-            'image' => $nameImage,
-        ];
-
-        // Proses update
-        if (!$this->polygons->where('id', $id)->update($data)) {
-            return redirect()->route('map')->with('error', 'Failed to update Polygons');
+        if (!$polygon->save()) {
+            return redirect()->route('map')->with('error', 'Polygon failed to update');
         }
 
-        return redirect()->route('map')->with('success', 'Polygons has been updated');
+        return redirect()->route('map')->with('success', 'Polygon updated successfully');
     }
 
     public function destroy(string $id)
     {
-        $imagefile = $this->polygons->find($id)->image;
+        $polygon = $this->polygons->find($id);
+        $imagefile = $polygon ? $polygon->image : null;
 
         if (!$this->polygons->destroy($id)) {
-            return redirect()->route('map')->with('error', 'Failed to delete polygon');
+            return redirect()->route('map')->with('error', 'Polygon failed to delete');
         }
 
-        // Delete image file if exists
-        if ($imagefile != null) {
-            if (file_exists('storage/images/' . $imagefile)) {
-                unlink('storage/images/' . $imagefile);
-            }
+        if ($imagefile && file_exists(public_path('storage/images/' . $imagefile))) {
+            unlink(public_path('storage/images/' . $imagefile));
         }
 
-        return redirect()->route('map')->with('success', 'polygon has been deleted');
+        return redirect()->route('map')->with('success', 'Polygon has been deleted');
+    }
+
+    public function apiPolygon($id)
+    {
+        $polygon = $this->polygons->find($id);
+
+        if (!$polygon) {
+            // Jika tidak ditemukan, kembalikan feature collection kosong
+            return response()->json([
+                'type' => 'FeatureCollection',
+                'features' => []
+            ]);
+        }
+
+        $feature = [
+            'type' => 'Feature',
+            'geometry' => json_decode($polygon->geom),
+            'properties' => [
+                'id' => $polygon->id,
+                'name' => $polygon->name,
+                'description' => $polygon->description,
+                'image' => $polygon->image,
+                'luas' => round((float) $polygon->length_km, 2),
+                'created_at' => $polygon->created_at,
+                'updated_at' => $polygon->updated_at,
+            ]
+        ];
+
+        return response()->json([
+            'type' => 'FeatureCollection',
+            'features' => [$feature]
+        ]);
     }
 }

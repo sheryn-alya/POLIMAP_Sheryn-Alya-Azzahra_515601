@@ -4,20 +4,32 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use App\Models\User;
 
 class PointsModel extends Model
 {
     protected $table = 'points';
-
     protected $guarded = ['id'];
+
+    // Relasi ke user
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function geojson_points()
     {
         $points = $this
-            ->select(DB::raw('id, ST_AsGeoJSON(geom) as geom, name,
-        description, image, created_at,updated_at'))->get(); // Menggunakan raw query untuk mengambil data geometri dalam format GeoJSON
-
-        //return $points;
+            ->select(DB::raw('
+                id,
+                ST_AsGeoJSON(geom) as geom,
+                name,
+                description,
+                image,
+                user_id,
+                created_at,
+                updated_at
+            '))->get();
 
         $geojson = [
             'type' => 'FeatureCollection',
@@ -33,6 +45,7 @@ class PointsModel extends Model
                     'name' => $p->name,
                     'description' => $p->description,
                     'image' => $p->image,
+                    'user_id' => $p->user_id, // ✅ Tambahkan user_id
                     'created_at' => $p->created_at,
                     'updated_at' => $p->updated_at
                 ],
@@ -46,13 +59,18 @@ class PointsModel extends Model
     public function geojson_point($id)
     {
         $points = $this
-            ->select(DB::raw('id, ST_AsGeoJSON(geom) as geom, name,
-        description, image, created_at,updated_at'))
+            ->select(DB::raw('
+                id,
+                ST_AsGeoJSON(geom) as geom,
+                name,
+                description,
+                image,
+                user_id,
+                created_at,
+                updated_at
+            '))
             ->where('id', $id)
             ->get();
-        // Menggunakan raw query untuk mengambil data geometri dalam format GeoJSON
-
-        //return $points;
 
         $geojson = [
             'type' => 'FeatureCollection',
@@ -68,6 +86,7 @@ class PointsModel extends Model
                     'name' => $p->name,
                     'description' => $p->description,
                     'image' => $p->image,
+                    'user_id' => $p->user_id, // ✅ Tambahkan user_id
                     'created_at' => $p->created_at,
                     'updated_at' => $p->updated_at
                 ],
