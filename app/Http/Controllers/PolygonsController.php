@@ -5,8 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\PolygonsModel;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Auth;
-
 
 class PolygonsController extends Controller
 {
@@ -35,7 +33,7 @@ class PolygonsController extends Controller
                 'name' => 'required|unique:polygons,name',
                 'description' => 'required',
                 'geom_polygon' => 'required',
-                'image' => 'nullable|mimes:jpeg,png,jpg,gif,svg|max:5000',
+                'image' => 'nullable|mimes:jpeg,png,jpg,gif,svg|max:51200',
             ],
             [
                 'name.required' => 'Name is required',
@@ -66,7 +64,7 @@ class PolygonsController extends Controller
             'name' => $request->name,
             'description' => $request->description,
             'image' => $name_image,
-            'user_id' => Auth::id(),
+            'user_id' => auth()->user()->id,
         ];
 
         if (!$this->polygons->create($data)) {
@@ -98,7 +96,7 @@ class PolygonsController extends Controller
             'name' => 'required|string|unique:polygons,name,' . $id,
             'description' => 'nullable|string',
             'geom_polygon' => 'required|string',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:1024',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg|max:51200',
         ]);
 
         $polygon = $this->polygons->find($id);

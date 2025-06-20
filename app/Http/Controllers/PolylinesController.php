@@ -6,8 +6,6 @@ use App\Models\PolylinesModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Auth;
-
 
 class PolylinesController extends Controller
 {
@@ -67,17 +65,18 @@ class PolylinesController extends Controller
             $name_image = null;
         }
 
-        // 🔥 Konversi GeoJSON ke geometry
-        $geom = DB::selectOne("SELECT ST_SetSRID(ST_GeomFromGeoJSON(?), 4326) AS geom", [
+        // Konversi WKT ke geometry PostgreSQL
+        $geom = DB::selectOne("SELECT ST_SetSRID(ST_GeomFromText(?), 4326) AS geom", [
             $request->geom_polyline
         ]);
+
         // Simpan data
         $data = [
             'geom' => $request->geom_polyline,
             'name' => $request->name,
             'description' => $request->description,
             'image' => $name_image,
-            'user_id' => Auth::id(),
+            'user_id' => auth()->user()->id,
         ];
 
         if (!$this->polylines->create($data)) {

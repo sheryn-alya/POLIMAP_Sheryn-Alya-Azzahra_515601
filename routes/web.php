@@ -18,6 +18,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/polygons', [PolygonsController::class, 'index'])->name('polygons.index');
+    Route::get('/polygons/create', [PolygonsController::class, 'create'])->name('polygons.create');
+    Route::post('/polygons', [PolygonsController::class, 'store'])->name('polygons.store');
+    Route::get('/polygons/{id}/edit', [PolygonsController::class, 'edit'])->name('polygons.edit');
+    Route::put('/polygons/{id}', [PolygonsController::class, 'update'])->name('polygons.update');
+    Route::delete('/polygons/{id}', [PolygonsController::class, 'destroy'])->name('polygons.destroy');
 });
 
 Route::resource('points', PointsController::class);
@@ -26,7 +32,7 @@ Route::resource('polygons', PolygonsController::class);
 
 Route::get('/map', [PointsController::class, 'index'])
     ->middleware(['auth', 'verified'])
-        ->name('map');
+    ->name('map');
 
 Route::get('/table', [TableController::class, 'index'])->name('table');
 

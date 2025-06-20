@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use id;
 use App\Models\PointsModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Facades\Auth;
 
 class PointsController extends Controller
 {
@@ -65,9 +63,8 @@ class PointsController extends Controller
             'name' => $request->name,
             'description' => $request->description,
             'image' => $name_image,
-            'user_id' => Auth::id(), // ✅ Lebih stabil karena pakai facade
+            'user_id' => auth()->user()->id,
         ];
-
 
         if (!$this->points->create($data)) {
             return redirect()->route('map')->with('error', 'Point failed to add');
@@ -140,7 +137,7 @@ class PointsController extends Controller
             'name' => $request->name,
             'description' => $request->description,
             'image' => $name_image,
-            'user_id' => Auth::id(),
+            'user_id' => auth()->user()->id,
         ];
 
         if (!$point->update($data)) {

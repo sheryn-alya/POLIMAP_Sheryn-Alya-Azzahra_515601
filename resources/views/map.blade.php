@@ -173,29 +173,6 @@
             </div>
         </div>
     </div>
-
-    <!-- Authentication Links -->
-                        <ul class="navbar-nav ms-auto">
-                            @auth
-                                <li class="nav-item">
-                                    <span class="nav-link">Hi, {{ Auth::user()->name }}</span>
-                                </li>
-                                <li class="nav-item">
-                                    <form method="POST" action="{{ route('logout') }}">
-                                        @csrf
-                                        <button type="submit" class="btn btn-link nav-link">Logout</button>
-                                    </form>
-                                </li>
-                            @endauth
-                            @guest
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('login') }}">Login</a>
-                                </li>
-                            @endguest
-                        </ul>
-                    </div>
-                </div>
-            </nav>
 @endsection
 
 @section('scripts')
@@ -244,7 +221,6 @@
             if (type === 'polyline') {
                 console.log("Create " + type);
                 $('#geom_polyline').val(objectGeometry);
-
                 //nanti memunculkann modal create polyline
                 $('#createpolylineModal').modal('show');
             } else if (type === 'polygon' || type === 'rectangle') {
@@ -257,12 +233,11 @@
                 $('#geom_point').val(objectGeometry);
                 $('#createpointModal').modal('show');
             } else {
-                console.log('_undefined_');
+                console.log('__undefined__');
             }
 
             drawnItems.addLayer(layer);
         });
-
         // GeoJSON Points
         var point = L.geoJson(null, {
             onEachFeature: function(feature, layer) {
@@ -273,121 +248,177 @@
                 var routeedit = "{{ route('points.edit', ':id') }}";
                 routeedit = routeedit.replace(':id', feature.properties.id);
 
-                var popupContent =
-                    "Nama: " + feature.properties.name + "<br>" +
-                    "Deskripsi: " + feature.properties.description + "<br>" +
-                    "Diubah: " + feature.properties.created_at + "<br>" +
-                    "<img src='{{ asset('storage/images') }}/" + feature.properties.image +
-                    "' width='200px' height='200px' alt=''>" + "<br>" +
-                    "<div class='row mt-4'>" +
-                    "<div class='col text-center'>" +
-                    "<a href='" + routeedit +
-                    "' class='btn btn-warning mx-2'><i class='fa-solid fa-pen-to-square'></i></a>" +
-                    //untuk tombol edit
-                    "</div>" +
-                    "<div class='col-6'>" +
-                    "<form method='POST' action='" + routedelete + "'>" +
-                    '@csrf' + '@method('DELETE')' +
-                    "<button type='submit' class='btn btn-danger mx-2' onclick='return confirm(Yakin akan dihapus?)'><i class='fa-solid fa-trash-can'></i></button>" +
-                    "</form>" +
-                    "</div>"; //untuk tombol hapus
+                var popupContent = `
+                    <div class="popup-content" style="max-width: 250px; font-size: 14px;">
+                    <div class="mb-1"><strong>Nama:</strong> ${feature.properties.name}</div>
+                    <div class="mb-1"><strong>Deskripsi:</strong> ${feature.properties.description}</div>
+                    <div class="mb-1"><strong>Diubah:</strong> ${feature.properties.created_at}</div>
+
+                    <img src="{{ asset('storage/images') }}/${feature.properties.image}"
+                        alt="" width="100%" class="img-fluid mb-2"/>
+
+                    <div class="row mb-1">
+                        <div class="col-6">
+                            <a href="${routeedit}" class="btn btn-warning btn-sm w-100">
+                                <i class="fa-solid fa-pen-to-square"></i> Edit
+                            </a>
+                        </div>
+                        <div class="col-6 text-end">
+                            <form method="POST" action="${routedelete}"
+                                onsubmit="return confirm('Yakin akan dihapus?')" class="m-0">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" class="btn btn-danger btn-sm w-100">
+                                    <i class="fa-solid fa-trash-can"></i> Hapus
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="mb-1 text-muted"><small><strong>Dibuat oleh:</strong> ${feature.properties.user_created}</small></div>
+                </div>
+            `;
 
 
-                layer.on({
-                    click: function(e) {
-                        point.bindPopup(popupContent);
-                    },
-                    mouseover: function(e) {
-                        point.bindTooltip(feature.properties.name);
-                    },
-                });
-            },
-        });
-        $.getJSON("{{ route('api.points') }}", function(data) {
-            point.addData(data);
-            map.addLayer(point);
-        });
+                //  ZIDNI CEK NANTI UNTUK CARA PENULISAN YG LAIN
+                //var popupContent = 'Nama: ${feature.properties.name} <br>
+                // Deskripsi: ${feature.properties.description} <br>
+                //Dibuat: ${feature.properties.created_at} <br>
+                // <img src="{{ asset('storage/images') }}/${feature.properties.//image" width="200px" alt=""> <br>
+                //<button class="btn btn-danger"><i class="fa-solid fa-trash-can"></i></button>';
+                // var popupContent = `Nama: ${feature.properties.name};
 
 
-        // GeoJSON Polylines
-        var polyline = L.geoJson(null, {
-            onEachFeature: function(feature, layer) {
+            layer.on({
+                click: function(e) {
+                    point.bindPopup(popupContent);
+                },
+                mouseover: function(e) {
+                    point.bindTooltip(feature.properties.name);
+                },
+            });
+        },
+    });
+    $.getJSON("{{ route('api.points') }}", function(data) {
+        point.addData(data);
+        map.addLayer(point);
+    });
 
-                var routedelete = "{{ route('polylines.destroy', ':id') }}";
-                routedelete = routedelete.replace(':id', feature.properties.id);
 
-                var routeedit = "{{ route('polylines.edit', ':id') }}";
-                routeedit = routeedit.replace(':id', feature.properties.id);
+    // GeoJSON Polylines
+    var polyline = L.geoJson(null, {
+        onEachFeature: function(feature, layer) {
 
-                var popupContent = "Nama: " + feature.properties.name + "<br>" +
-                    "Deskripsi: " + feature.properties.description + "<br>" +
-                    "Panjang: " + feature.properties.length_km.toFixed(2) + " km" + "<br>" +
-                    "Dibuat: " + feature.properties.created_at + "<br>" +
-                    "<img src='{{ asset('storage/images') }}/" + feature.properties.image +
-                    "' width='200px' height='200px' alt=''>" + "<br>" +
-                    "<div class='row mt-4'>" +
-                    "<div class='col text-center'>" +
-                    "<a href='" + routeedit +
-                    "' class='btn btn-warning mx-2'><i class='fa-solid fa-pen-to-square'></i></a>" +
-                    "</div>" +
-                    "<div class='col-6'>" +
-                    "<form method='POST' action='" + routedelete + "'>" +
-                    '@csrf' + '@method('DELETE')' +
-                    "<button type='submit' class='btn btn-danger mx-2' onclick='return confirm(Yakin akan dihapus?)'><i class='fa-solid fa-trash-can'></i></button>" +
-                    "</form>"
-                "</div>" +
-                "</div>";
+            var routedelete = "{{ route('polylines.destroy', ':id') }}";
+            routedelete = routedelete.replace(':id', feature.properties.id);
 
-                "Panjang: " + feature.properties.length_km.toFixed(2) + " km" + "<br>" +
-                    "Dibuat: " + feature.properties.created_at;
-                layer.on({
-                    click: function(e) {
-                        polyline.bindPopup(popupContent);
-                    },
-                    mouseover: function(e) {
-                        polyline.bindTooltip(feature.properties.name);
-                    },
-                });
-            },
-        });
-        $.getJSON("{{ route('api.polylines') }}", function(data) {
-            polyline.addData(data);
-            map.addLayer(polyline);
-        });
 
-        // GeoJSON Polygons
-        var polygon = L.geoJson(null, {
-            onEachFeature: function(feature, layer) {
+            var routeedit = "{{ route('polylines.edit', ':id') }}";
+            routeedit = routeedit.replace(':id', feature.properties.id);
 
-                var routedelete = "{{ route('polygons.destroy', ':id') }}";
-                routedelete = routedelete.replace(':id', feature.properties.id);
+            var popupContent = `
+                <div style="max-width: 250px; font-size: 14px; line-height: 1.2;">
+                <p style="margin: 1;"><strong>Nama:</strong> ${feature.properties.name}</p>
+                <p style="margin: 1;"><strong>Deskripsi:</strong> ${feature.properties.description}</p>
+                <p style="margin: 1;"><strong>Panjang:</strong> ${feature.properties.length_km.toFixed(2)} km</p>
+                <p style="margin: 1;"><strong>Dibuat:</strong> ${feature.properties.created_at}</p>
+                <img src='{{ asset('storage/images') }}/${feature.properties.image}' width='200px' alt='' style="margin: 4px 0;">
 
-                var routeedit = "{{ route('polygons.edit', ':id') }}";
-                routeedit = routeedit.replace(':id', feature.properties.id);
+                <div class='row' style="margin: 0;">
+                    <div class='col-6'>
+                        <a href='${routeedit}' class='btn btn-warning btn-sm'>
+                            <i class='fa-solid fa-pen-to-square'></i>
+                        </a>
+                    </div>
+                    <div class='col-6 text-end'>
+                        <form method='POST' action='${routedelete}' style="margin: 0;">
+                            @csrf
+                            @method('DELETE')
+                            <button type='submit' class='btn btn-danger btn-sm' onclick='return confirm("Yakin akan dihapus?")'>
+                                <i class='fa-solid fa-trash-can'></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
 
-                var popupContent = "Nama: " + feature.properties.name + "<br>" +
-                    "Deskripsi: " + feature.properties.description + "<br>" +
-                    "Luas: " + feature.properties.area_ha.toFixed(2) + " ha" + "<br>" +
-                    "Dibuat: " + feature.properties.created_at + "<br>" +
-                    "<img src='{{ asset('storage/images') }}/" + feature.properties.image +
-                    "' width='200px' height='200px' alt=''>" + "<br>" +
-                    "<div class='row mt-4'>" +
-                    "<div class='col text-center'>" +
-                    "<a href='" + routeedit +
-                    "' class='btn btn-warning mx-2'><i class='fa-solid fa-pen-to-square'></i></a>" +
-                    "</div>" +
-                    "<div class='col-6'>" +
-                    "<form method='POST' action='" + routedelete + "'>" +
-                    '@csrf' + '@method('DELETE')' +
-                    "<button type='submit' class='btn btn-danger mx-2' onclick='return confirm(Yakin akan dihapus?)'><i class='fa-solid fa-trash-can'></i></button>" +
-                    "</form>"
-                "</div>" +
-                "</div>";
+                <p style="margin: 0;"><strong>Dibuat oleh:</strong> ${feature.properties.user_created}</p>
+            </div>
+        `;
 
-                "Luas: " + feature.properties
-                    .area_ha.toFixed(2) + " ha" + "<br>" +
-                    "Dibuat: " + feature.properties.created_at;
+
+            layer.on({
+                click: function(e) {
+                    polyline.bindPopup(popupContent);
+                },
+                mouseover: function(e) {
+                    polyline.bindTooltip(feature.properties.name);
+                },
+            });
+        },
+    });
+    $.getJSON("{{ route('api.polylines') }}", function(data) {
+        polyline.addData(data);
+        map.addLayer(polyline);
+    });
+
+    // GeoJSON Polygons
+    var polygon = L.geoJson(null, {
+        onEachFeature: function(feature, layer) {
+
+            var routedelete = "{{ route('polygons.destroy', ':id') }}";
+            routedelete = routedelete.replace(':id', feature.properties.id);
+
+            var routeedit = "{{ route('polygons.edit', ':id') }}";
+            routeedit = routeedit.replace(':id', feature.properties.id);
+
+            var popupContent = `
+    <div class="popup-content" style="max-width: 250px; font-size: 14px;">
+        <div class="mb-1"><strong>Nama:</strong> ${feature.properties.name}</div>
+        <div class="mb-1"><strong>Deskripsi:</strong> ${feature.properties.description}</div>
+        <div class="mb-1"><strong>Luas:</strong> ${feature.properties.area_ha.toFixed(2)} ha</div>
+        <div class="mb-1"><strong>Tanggal dibuat:</strong> ${feature.properties.created_at}</div>
+
+        <div class="text-center my-2">
+            <img src="{{ asset('storage/images') }}/${feature.properties.image}"
+                alt="Gambar" class="img-fluid" style="max-width: 200px; border-radius: 8px;">
+        </div>
+
+        <div class="row mb-2">
+            <div class="col-6">
+                <a href="${routeedit}" class="btn btn-warning btn-sm w-100">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                </a>
+            </div>
+            <div class="col-6 text-end">
+                <form method="POST" action="${routedelete}"
+                    onsubmit="return confirm('Yakin akan dihapus?')" class="m-0">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-danger btn-sm w-100">
+                        <i class="fa-solid fa-trash-can"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <div class="mb-1 text-muted"><small><strong>Dibuat oleh:</strong> ${feature.properties.user_created}</small></div>
+    </div>
+`;
+
+
+                // "Luas: " + feature.properties
+                //     .area_ha.toFixed(2) + " ha" + "<br>" +
+                // "Dibuat: " + feature.properties.created_at;
                 layer.bindPopup(popupContent);
+
+                layer.on({
+                    click: function(e) {
+                        polygon.bindPopup(popupContent);
+                    },
+                    mouseover: function(e) {
+                        polygon.bindTooltip(feature.properties.name);
+                    },
+                });
             },
         });
         $.getJSON("{{ route('api.polygons') }}", function(data) {

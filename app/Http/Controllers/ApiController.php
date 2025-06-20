@@ -25,7 +25,6 @@ class ApiController extends Controller
         $points = $this->points->geojson_points();
         return response()->json($points, 200, [], JSON_NUMERIC_CHECK);
     }
-
     public function point($id)
     {
         $points = $this->points->geojson_point($id);
@@ -38,7 +37,6 @@ class ApiController extends Controller
         $polylines = $this->polylines->geojson_polylines();
         return response()->json($polylines, 200, [], JSON_NUMERIC_CHECK);
     }
-
     public function polyline($id)
     {
         $polylines = $this->polylines->geojson_polyline($id);
@@ -50,7 +48,6 @@ class ApiController extends Controller
         $polygons = $this->polygons->geojson_polygons();
         return response()->json($polygons, 200, [], JSON_NUMERIC_CHECK);
     }
-
 
     public function polygon($id)
     {
