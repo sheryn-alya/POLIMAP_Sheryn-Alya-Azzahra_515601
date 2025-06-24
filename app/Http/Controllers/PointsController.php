@@ -85,7 +85,7 @@ class PointsController extends Controller
             'id' => $id,
         ];
 
-        return view('edit-point', $data);
+        return view('edit_point', $data);
     }
 
     public function update(Request $request, string $id)

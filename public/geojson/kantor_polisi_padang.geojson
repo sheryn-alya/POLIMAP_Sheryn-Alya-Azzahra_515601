@@ -1,0 +1,33 @@
+{
+"type": "FeatureCollection",
+"name": "kantor_polisi_padang",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "id": 1.0, "Nama": "Polresta padang", "X": 100.362757, "Y": -0.951121 }, "geometry": { "type": "Point", "coordinates": [ 100.3627567, -0.951120918 ] } },
+{ "type": "Feature", "properties": { "id": 2.0, "Nama": "Polsek Padang selatan", "X": 100.363118, "Y": -0.96121 }, "geometry": { "type": "Point", "coordinates": [ 100.3631178, -0.961210088 ] } },
+{ "type": "Feature", "properties": { "id": 3.0, "Nama": "Dilantas Polda Sumbar", "X": 100.357671, "Y": -0.963724 }, "geometry": { "type": "Point", "coordinates": [ 100.357671, -0.963723886 ] } },
+{ "type": "Feature", "properties": { "id": 4.0, "Nama": "Kantor Polisi Militer Padang", "X": 100.358809, "Y": -0.954042 }, "geometry": { "type": "Point", "coordinates": [ 100.3588092, -0.95404183 ] } },
+{ "type": "Feature", "properties": { "id": 5.0, "Nama": "Pos Polisi", "X": 100.363603, "Y": -0.94778 }, "geometry": { "type": "Point", "coordinates": [ 100.3636027, -0.947779505 ] } },
+{ "type": "Feature", "properties": { "id": 6.0, "Nama": "Pos BM", "X": 100.355263, "Y": -0.947592 }, "geometry": { "type": "Point", "coordinates": [ 100.3552632, -0.947592223 ] } },
+{ "type": "Feature", "properties": { "id": 7.0, "Nama": "Pos Polisi Simpang kandang", "X": 100.363131, "Y": -0.947891 }, "geometry": { "type": "Point", "coordinates": [ 100.3631312, -0.947890598 ] } },
+{ "type": "Feature", "properties": { "id": 8.0, "Nama": "Markas Komando Kota Padang", "X": 100.363782, "Y": -0.946644 }, "geometry": { "type": "Point", "coordinates": [ 100.363782, -0.946643606 ] } },
+{ "type": "Feature", "properties": { "id": 9.0, "Nama": "Polsa Sumatera Barat", "X": 100.360434, "Y": -0.936206 }, "geometry": { "type": "Point", "coordinates": [ 100.3604339, -0.936205522 ] } },
+{ "type": "Feature", "properties": { "id": 10.0, "Nama": "Polrestas Padang Unit Laka Lantas", "X": 100.365977, "Y": -0.933886 }, "geometry": { "type": "Point", "coordinates": [ 100.3659771, -0.933886081 ] } },
+{ "type": "Feature", "properties": { "id": 11.0, "Nama": "Pos Polisi Rasuna Said", "X": 100.361434, "Y": -0.934148 }, "geometry": { "type": "Point", "coordinates": [ 100.3614338, -0.934148207 ] } },
+{ "type": "Feature", "properties": { "id": 12.0, "Nama": "Pos Polisi Padang Baru", "X": 100.361347, "Y": -0.926243 }, "geometry": { "type": "Point", "coordinates": [ 100.3613468, -0.926243102 ] } },
+{ "type": "Feature", "properties": { "id": 13.0, "Nama": "Kantor Polisi Padang Baru", "X": 100.351569, "Y": -0.925016 }, "geometry": { "type": "Point", "coordinates": [ 100.3515691, -0.925016487 ] } },
+{ "type": "Feature", "properties": { "id": 14.0, "Nama": "Kantor Polsek Kuranji", "X": 100.397238, "Y": -0.923358 }, "geometry": { "type": "Point", "coordinates": [ 100.3972379, -0.92335799 ] } },
+{ "type": "Feature", "properties": { "id": 15.0, "Nama": "Polsek Padang Utara", "X": 100.352046, "Y": -0.891479 }, "geometry": { "type": "Point", "coordinates": [ 100.3520457, -0.89147935 ] } },
+{ "type": "Feature", "properties": { "id": 16.0, "Nama": "Kantor Polisi Belimbing", "X": 100.414526, "Y": -0.90158 }, "geometry": { "type": "Point", "coordinates": [ 100.414525958111994, -0.901580321053632 ] } },
+{ "type": "Feature", "properties": { "id": 17.0, "Nama": "Polsek Pauh", "X": 100.425688, "Y": -0.930024 }, "geometry": { "type": "Point", "coordinates": [ 100.425687576223993, -0.930023805215896 ] } },
+{ "type": "Feature", "properties": { "id": 18.0, "Nama": "Polres Sektor Lubuk Kilangan", "X": 100.419846, "Y": -0.952359 }, "geometry": { "type": "Point", "coordinates": [ 100.419845548053004, -0.952359164713681 ] } },
+{ "type": "Feature", "properties": { "id": 19.0, "Nama": "Pos Polisi Padang Laweh", "X": 100.364028, "Y": -0.954691 }, "geometry": { "type": "Point", "coordinates": [ 100.36402789604, -0.954691136682903 ] } },
+{ "type": "Feature", "properties": { "id": 20.0, "Nama": "Pos Lantas Simpang Alai", "X": 100.3677, "Y": -0.924782 }, "geometry": { "type": "Point", "coordinates": [ 100.367699715759002, -0.924782159605586 ] } },
+{ "type": "Feature", "properties": { "id": 21.0, "Nama": "Pos Polisi Simpang DPRD", "X": 100.35096, "Y": -0.906061 }, "geometry": { "type": "Point", "coordinates": [ 100.350960376160003, -0.906060791729154 ] } },
+{ "type": "Feature", "properties": { "id": 22.0, "Nama": "SAMSAT Padang", "X": 100.355324, "Y": -0.928647 }, "geometry": { "type": "Point", "coordinates": [ 100.355324312668003, -0.928647012336887 ] } },
+{ "type": "Feature", "properties": { "id": 23.0, "Nama": "Polres Kawasan Teluk Bayur", "X": 100.382189, "Y": -0.992267 }, "geometry": { "type": "Point", "coordinates": [ 100.382189196870996, -0.992267413079853 ] } },
+{ "type": "Feature", "properties": { "id": 24.0, "Nama": null, "X": 0.0, "Y": 0.0 }, "geometry": { "type": "Point", "coordinates": [ -1.79769313486231571e+308, -1.79769313486231571e+308 ] } },
+{ "type": "Feature", "properties": { "id": 25.0, "Nama": null, "X": 0.0, "Y": 0.0 }, "geometry": { "type": "Point", "coordinates": [ -1.79769313486231571e+308, -1.79769313486231571e+308 ] } },
+{ "type": "Feature", "properties": { "id": 26.0, "Nama": null, "X": 0.0, "Y": 0.0 }, "geometry": { "type": "Point", "coordinates": [ -1.79769313486231571e+308, -1.79769313486231571e+308 ] } }
+]
+}

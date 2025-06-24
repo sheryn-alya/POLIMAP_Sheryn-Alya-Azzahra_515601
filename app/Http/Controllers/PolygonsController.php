@@ -87,7 +87,7 @@ class PolygonsController extends Controller
             'id' => $id,
         ];
 
-        return view('edit-polygon', $data);
+        return view('edit_polygon', $data);
     }
 
     public function update(Request $request, $id)

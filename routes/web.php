@@ -10,6 +10,7 @@ use App\Http\Controllers\PolylinesController;
 
 Route::get('/', [PublicController::class, 'index'])->name('home');
 
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -24,6 +25,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/polygons/{id}/edit', [PolygonsController::class, 'edit'])->name('polygons.edit');
     Route::put('/polygons/{id}', [PolygonsController::class, 'update'])->name('polygons.update');
     Route::delete('/polygons/{id}', [PolygonsController::class, 'destroy'])->name('polygons.destroy');
+
+    //dari responsi
+    Route::delete('/points/{id}', [PointsController::class, 'destroy'])->name('points.destroy');
+
+
 });
 
 Route::resource('points', PointsController::class);
